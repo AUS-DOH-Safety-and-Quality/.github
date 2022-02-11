@@ -1,0 +1,11 @@
+name: HQIU SQL Code Linting
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  lint-models:
+    uses: AUS-DOH-Safety-and-Quality/HQIU-Coding-Styles/.github/workflows/lint-sql.yml
