@@ -1,0 +1,4 @@
+{
+    "name": "HQIU SQL Linting",
+    "description": "Workflow for checking whether any changed SQL files follow the HQIU SQL coding style"
+}
