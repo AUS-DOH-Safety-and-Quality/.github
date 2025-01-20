@@ -1,0 +1,29 @@
+name: Update Snowflake Views Actions
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: 'Folder containing the views to update'
+        default: 'Snowflake Views'
+        required: false
+        type: string
+
+jobs:
+  update-views:
+    runs-on: ubuntu-latest
+    env:
+      SNOWFLAKE_TRIGGER_URL: ${{ secrets.SNOWFLAKE_TRIGGER_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read files into array
+        id: read-files
+        run: |
+          echo "::set-output name=files::$(find ${{ inputs.path }} -type f -name '*.sql' -exec echo {} \;)"
+
+      - name: Submit POST request to Snowflake Trigger
+      # Collapse array into single string, request body has schema: { "queries": ["query1", "query2", ...] }
+        run: |
+          echo "::set-output name=queries::$(echo "${{ steps.read-files.outputs.files }}" | tr '\n' ',' | sed 's/,$//')"
+          curl -X POST -H "Content-Type: application/json" -d "{\"queries\": [${{ steps.read-files.outputs.files }}]}" $SNOWFLAKE_TRIGGER_URL
